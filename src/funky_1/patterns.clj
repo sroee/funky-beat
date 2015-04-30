@@ -33,7 +33,7 @@
                                  (repeat 8 nil) nil nil nil kick2086 snare26903 kick2086 nil nil])
                        (flatten [[crash (repeat 3 nil)] (repeat 7 [c-hat802 (repeat 3 nil)])]))}})
 
-(def bassp2 {:intro {
+(def bassp {:intro {
               :times (map (fn [t] (+ 3 (/ t 4))) (range 0 4))
               :sounds [[3 5 0.2] [3 3 0.2] [3 5 0.2]]
             }

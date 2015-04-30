@@ -40,17 +40,22 @@
   (let [start-time (metro)]
     [(map  
        (fn [dbl-bar] 
-         (play-ptrn (:p2 drums) metro (+ (* 8 dbl-bar) start-time))) (range 0 64))
+         (play-ptrn (:p2 drums) metro (+ (* 8 dbl-bar) start-time))) 
+         (range 0 32))
      (map
        (fn [dbl-bar]
          (play-ptrn (bass-ptrn (:p1 bassp)) metro (+ (* 8 dbl-bar) start-time)))
-      (range 4 64))
+         (concat (range 4 16) (range 20 30)))
      (map 
        (fn [dbl-bar] 
          (play-ptrn (bass-ptrn 
                       {:sounds (transpose-stringed (:sounds (:p1 bassp)) 3) :times (:times (:p1 bassp))} 
                       bg2) 
-                    metro (+ (* 8 dbl-bar) start-time))) (concat [12] (range 14 16) (range 20 24) (range 32 40) (range 48 60))) 
+                    metro (+ (* 8 dbl-bar) start-time))) 
+         (concat (range 16 20) (range 24 28))
+      ;   (concat [12] (range 14 16) (range 20 24) (range 32 40) (range 48 60))
+     ) 
+
      ])
   )
 
