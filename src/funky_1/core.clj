@@ -45,16 +45,28 @@
      (map
        (fn [dbl-bar]
          (play-ptrn (bass-ptrn (:p1 bassp)) metro (+ (* 8 dbl-bar) start-time)))
-         (concat (range 4 16) (range 20 30)))
+         (concat (range 2 6) (range 8 10) (range 14 26)))
      (map 
        (fn [dbl-bar] 
          (play-ptrn (bass-ptrn 
-                      {:sounds (transpose-stringed (:sounds (:p1 bassp)) 3) :times (:times (:p1 bassp))} 
+                      {:sounds (transpose-stringed (:sounds (:p1 bassp)) 4) :times (:times (:p1 bassp))} 
                       bg2) 
                     metro (+ (* 8 dbl-bar) start-time))) 
-         (concat (range 16 20) (range 24 28))
-      ;   (concat [12] (range 14 16) (range 20 24) (range 32 40) (range 48 60))
-     ) 
+         (concat (range 10 14) (range 20 24)))
+     (map 
+       (fn [dbl-bar] 
+         (play-ptrn (bass-ptrn 
+                      {:sounds (transpose-stringed (:sounds (:p1 bassp)) 32) :times (:times (:p1 bassp))} 
+                      bg3) 
+                    metro (+ 1 (+ (* 8 dbl-bar) start-time)))) 
+         (range 24 28)) 
+     (map 
+       (fn [dbl-bar] 
+         (play-ptrn (bass-ptrn 
+                      {:sounds (transpose-stringed (:sounds (:p1 bassp)) 12) :times (:times (:p1 bassp))} 
+                      bg3) 
+                    metro (+ (* 8 dbl-bar) start-time))) 
+         (range 6 8)) 
 
      ])
   )
