@@ -16,25 +16,26 @@
             (fn [timing]
               (at (metro timing) (sound))))]
     {:drums  {:p1 {
-                :times (map (fn [t] (/ t 4)) (range 0 32))
+                :times (repeat 32 0.25)
                 :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
                          (flatten [kick2086 nil nil kick2086 snare26903 nil snare26903 kick2086 nil nil nil nil snare26903 nil nil kick2086 
                                    (repeat 8 nil) nil nil nil kick2086 snare26903 kick2086 nil nil])
                          [nil c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil nil c-hat802 c-hat802 nil
                          nil c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil nil c-hat802 c-hat802 c-hat802])}
               :p2 {
-                :times (map (fn [t] (/ t 4)) (range 0 32))
+                :times (repeat 32 0.25)
                 :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
                          (flatten [kick2086 nil nil kick2086 snare26903 nil snare26903 kick2086 nil nil nil nil snare26903 nil nil kick2086 
                                    (repeat 8 nil) nil nil nil kick2086 snare26903 kick2086 nil nil])
                          (flatten [[crash (repeat 3 nil)] (repeat 7 [c-hat802 (repeat 3 nil)])]))}}
      :bassp  {:p1 {
-                :times  [0     1     1.5   2     2.25  2.75  4     4.5   5     5.5   6     6.5   6.75]
-                :sounds [[3 3 1] [3 5 0.4] [3 3 0.4] [3 6 0.4] [3 7 0.25] [3 3 0.4] [3 3 0.4] [3 5 0.4] [3 6 0.4] [3 7 0.4] [2 3 0.4] [2 5 0.25] [2 6 0.4]]
+                :times  [ 1       0.5       0.5       0.25      0.5         1.25      0.5       0.5       0.5       0.5       0.5       0.25        1.25]
+                :sounds [ [3 3 1] [3 5 0.4] [3 3 0.4] [3 6 0.4] [3 7 0.25]  [3 3 0.4] [3 3 0.4] [3 5 0.4] [3 6 0.4] [3 7 0.4] [2 3 0.4] [2 5 0.25]  [2 6 0.4]]
               }
               :p2 {
-                :times  [-1.5 -1 -0.5 0  0.25  0.75  1.5 2 2.75  3.5 3.75]
-                :sounds [[1 1 0.4] [1 4 0.4] [1 6 0.5] [2 8 0.25] [2 6 0.25] [2 4 0.4] [1 6 0.25] [1 4 0.5] [1 6 0.25] [1 4 0.25] [1 6 0.25]]
+                :time-offset -1.5
+                :times  [0.5        0.5       0.5       0.25        0.5         0.75      0.5         0.75      0.75        0.25        0.25]
+                :sounds [[1 1 0.4]  [1 4 0.4] [1 6 0.5] [2 8 0.25]  [2 6 0.25]  [2 4 0.4] [1 6 0.25]  [1 4 0.5] [1 6 0.25]  [1 4 0.25]  [1 6 0.25]]
               }
             }}))
 
@@ -43,7 +44,7 @@
         drums (:drums phrases)
         bassp (:bassp phrases)]
     [{:p (:p2 drums)
-    :b (range 0 32)}
+    :b (range 0 36)}
    {:p (bass-ptrn (:p1 bassp) metro bg)
     :b (concat (range 2 6) (range 8 10) (range 14 26))}
    {:p (bass-ptrn {:sounds (transpose-stringed (:sounds (:p1 bassp)) 3) :times (:times (:p1 bassp))} metro bg2)
@@ -51,4 +52,7 @@
    {:p (bass-ptrn {:sounds (transpose-stringed (:sounds (:p1 bassp)) 32) :times (:times (:p1 bassp))} metro bg3)
     :b (map #( -> (+ (/ 1 8) %)) (range 24 28))}
    {:p (bass-ptrn {:sounds (transpose-stringed (:sounds (:p1 bassp)) 12) :times (:times (:p1 bassp))} metro bg3)
-    :b (range 6 8)}]))
+    :b (range 6 8)}
+   {:p (bass-ptrn (:p2 bassp) metro bg)
+    :b (range 30 36)}
+     ]))

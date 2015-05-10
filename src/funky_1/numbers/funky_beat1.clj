@@ -27,8 +27,8 @@
      ;                              (repeat 8 nil) nil nil nil kick2086 snare26903 kick2086 nil nil])
      ;                    (flatten [[crash (repeat 3 nil)] (repeat 7 [c-hat802 (repeat 3 nil)])]))}}
      :bassp  {:p1 {
-                :times  (flatten (map (fn [lst additive] (map #( -> (+ % additive)) lst)) 
-                          (repeat 2 [0            0.25        0.75        1           1.25        1.5         1.75        2.5         3.25        3.75]) [0 4]))
+                :times  (flatten (repeat 2 
+                                     [0.25        0.5         0.25        0.25        0.25        0.25        0.75        0.75        0.5         0.25]))
                 :sounds             [[2 12 0.25]  [2 12 0.25] [2 10 0.25] [2 12 0.25] [2 10 0.25] [1 12 0.25] [1 10 0.75] [1 11 0.75] [1 12 0.5]  [1 12 0.25]
                                      [2 0 0.25]   [2 0 0.25]  [1 0 0.25]  [2 0 0.25]  [1 3 0.25]  [1 0 0.25]  [2 3 0.75]  [3 4 0.75]  [3 5 0.75]]
               }
