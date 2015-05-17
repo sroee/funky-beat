@@ -2,12 +2,12 @@
   (:require [overtone.at-at :as att])
   (:use [overtone.live]))
 
-(def song-pool (att/mk-pool))
+(def inc-sched-pull (att/mk-pool))
 
 (defn time-len-to-abs [time-len-arr offset]
   (drop-last (reduce (fn [lst tm] (conj lst (+ (last lst) tm))) [offset] time-len-arr)))
 
-(defn play-riff [metro beat time-arr play-arr]
+(defn play-phrase-abs-time [metro beat time-arr play-arr]
   (map 
     (fn [plays t] 
       (map 
@@ -18,10 +18,10 @@
 
 
 
-(defn play-ptrn [ptrn metro start-time] 
-  (play-riff metro start-time
-                (time-len-to-abs (:times ptrn) (get ptrn :time-offset 0))
-                (:sounds ptrn)))
+(defn play-phrase [phrase metro beat] 
+  (play-phrase-abs-time metro beat
+                (time-len-to-abs (:times phrase) (get phrase :time-offset 0))
+                (:sounds phrase)))
 
 (defn song-to-bars [song-parts]
   (apply merge-with concat
@@ -36,9 +36,9 @@
         song-parts (song-fn :metro metro)
         bars (song-to-bars song-parts)
         bars-count (int (apply max (map first bars)))]
-    (letfn [(play-dbl-bar [bar-num]
+    (letfn [(play-bar [bar-num]
               (if (> bars-count bar-num) 
-                (att/at (metro (+ (* 8 bar-num) start-time 4)) (fn [] (eval (play-dbl-bar (+ bar-num 1)))) song-pool)) 
+                (att/at (metro (+ (* 8 bar-num) start-time 4)) (fn [] (eval (play-bar (+ bar-num 1)))) inc-sched-pull)) 
               (let [what-to-play (filter #( -> 
                                             (let [b (first %)]
                                               (and
@@ -46,13 +46,13 @@
                                                 (< b (+ bar-num 1))))) bars)]
                 (map (fn [to-play]
                        (let [beat (first to-play)
-                             licks (second to-play)]
-                         (map (fn [lick] 
-                                (play-ptrn lick metro (+ (* 8 beat) start-time))) licks)
+                             phrases (second to-play)]
+                         (map (fn [phrase] 
+                                (play-phrase phrase metro (+ (* 8 beat) start-time))) phrases)
                          )) 
                      what-to-play))
               )]
-      (att/at (metro) (fn [] (eval (play-dbl-bar 0))) song-pool)
+      (att/at (metro) (fn [] (eval (play-bar 0))) inc-sched-pull)
   ))
   "playing..")
 
