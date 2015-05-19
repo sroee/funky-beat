@@ -13,10 +13,10 @@
 
 (def inc-sched-pull (att/mk-pool))
 
-(defn time-len-to-abs [time-len-arr offset]
+(defn- time-len-to-abs [time-len-arr offset]
   (drop-last (reduce (fn [lst tm] (conj lst (+ (last lst) tm))) [offset] time-len-arr)))
 
-(defn play-phrase-abs-time [metro beat time-arr play-arr]
+(defn- play-phrase-abs-time [metro beat time-arr play-arr]
   (map 
     (fn [plays t] 
       (map 
@@ -25,6 +25,11 @@
         plays)
       ) play-arr time-arr))
 
+(defn stop-pl [& {:keys [:im]} ]
+  (if im
+    (stop))
+  (att/stop-and-reset-pool! inc-sched-pull :strategy :kill))
+
 
 
 (defn play-phrase [phrase metro beat] 
@@ -32,16 +37,8 @@
                 (time-len-to-abs (:times phrase) (get phrase :time-offset 0))
                 (:sounds phrase)))
 
-(defn song-to-bars [song-parts]
-  (apply merge-with concat
-              (map (fn [part] 
-                     (into {} 
-                           (map #( -> [% [(:p part)]] ) (:b part))))
-                   song-parts)))
 
-
-;; use this function to wrap reading of next bars to play pattern from sequence.
-(defn sorted-seq-yield-next [sq]
+(defn- sorted-seq-yield-next [sq]
   (let [cached (atom sq)]
     (fn [from to]
       (if (empty? @cached)
