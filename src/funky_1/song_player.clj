@@ -2,6 +2,15 @@
   (:require [overtone.at-at :as att])
   (:use [overtone.live]))
 
+;; todos:
+;; V can run infinite running loop
+;; can alter part schedule while running
+;; can append new part while running
+;; can alter part while running
+;; song can be stopped
+;; multiple songs can be loaded.
+;; * can read loaded part for playing outside player.
+
 (def inc-sched-pull (att/mk-pool))
 
 (defn time-len-to-abs [time-len-arr offset]
@@ -30,26 +39,51 @@
                            (map #( -> [% [(:p part)]] ) (:b part))))
                    song-parts)))
 
+
+;; use this function to wrap reading of next bars to play pattern from sequence.
+(defn sorted-seq-yield-next [sq]
+  (let [cached (atom sq)]
+    (fn [from to]
+      (if (empty? @cached)
+        nil
+        (loop [sq @cached
+               res []]
+          (let [nxt (first sq)]
+            (if (and (not (nil? nxt)) (< nxt to))
+              (if (>= nxt from)
+                (recur (drop 1 sq)
+                       (conj res nxt))
+                (recur (drop 1 sq)
+                       res))
+              (do
+                (reset! cached sq)
+                res))))))))
+
+(defn part-yielder [part]
+ (let [bar-yielder (sorted-seq-yield-next (:b part))
+       part (:p part)]
+   (fn [bar-num]
+     (if-let [beats (bar-yielder bar-num (+ bar-num 1))]
+       (map #( -> [% part]) beats)
+       nil))))
+ 
+
 (defn play-song [song-fn]
   (let [metro (metronome 90)
         start-time (metro)
         song-parts (song-fn :metro metro)
-        bars (song-to-bars song-parts)
-        bars-count (int (apply max (map first bars)))]
+        part-yielders (map part-yielder song-parts)]
     (letfn [(play-bar [bar-num]
-              (if (> bars-count bar-num) 
-                (att/at (metro (+ (* 8 bar-num) start-time 4)) (fn [] (eval (play-bar (+ bar-num 1)))) inc-sched-pull)) 
-              (let [what-to-play (filter #( -> 
-                                            (let [b (first %)]
-                                              (and
-                                                (>= b bar-num)
-                                                (< b (+ bar-num 1))))) bars)]
+              (let [part-yields (remove nil?
+                                        (map #( -> (% bar-num)) part-yielders))
+                    what-to-play (apply concat part-yields)
+                    is-all-done (empty? part-yields)]
+                (if (not is-all-done)
+                  (att/at (metro (+ (* 8 bar-num) start-time 4)) (fn [] (eval (play-bar (+ bar-num 1)))) inc-sched-pull)) 
                 (map (fn [to-play]
                        (let [beat (first to-play)
-                             phrases (second to-play)]
-                         (map (fn [phrase] 
-                                (play-phrase phrase metro (+ (* 8 beat) start-time))) phrases)
-                         )) 
+                             phrase (second to-play)]
+                         (play-phrase phrase metro (+ (* 8 beat) start-time)))) 
                      what-to-play))
               )]
       (att/at (metro) (fn [] (eval (play-bar 0))) inc-sched-pull)

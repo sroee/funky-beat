@@ -13,19 +13,19 @@
             (fn [timing]
               (at (metro timing) (sound))))]
 
-    {;:drums  {:p1 {
-     ;           :times (map (fn [t] (/ t 4)) (range 0 32))
-     ;           :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
-     ;                    (flatten [kick2086 nil nil kick2086 snare26903 nil snare26903 kick2086 nil nil nil nil snare26903 nil nil kick2086 
-     ;                              (repeat 8 nil) nil nil nil kick2086 snare26903 kick2086 nil nil])
-     ;                    [nil c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil nil c-hat802 c-hat802 nil
-     ;                    nil c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil nil c-hat802 c-hat802 c-hat802])}
-     ;         :p2 {
-     ;           :times (map (fn [t] (/ t 4)) (range 0 32))
-     ;           :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
-     ;                    (flatten [kick2086 nil nil kick2086 snare26903 nil snare26903 kick2086 nil nil nil nil snare26903 nil nil kick2086 
-     ;                              (repeat 8 nil) nil nil nil kick2086 snare26903 kick2086 nil nil])
-     ;                    (flatten [[crash (repeat 3 nil)] (repeat 7 [c-hat802 (repeat 3 nil)])]))}}
+    {:drums  {:p1 {
+                :times (repeat 32 0.25) 
+                :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
+                         (flatten [fkick nil nil fkick fsnare nil fsnare fkick nil nil nil nil fsnare nil nil fkick 
+                                   (repeat 8 nil) nil nil nil fkick fsnare fkick nil nil])
+                         [nil fchat fchat nil fchat fchat fchat nil fchat fchat fchat nil nil fchat fchat nil
+                         nil fchat fchat nil fchat fchat fchat nil fchat fchat fchat nil nil fchat fchat fchat])}
+              :p2 {
+                :times (repeat 32 0.25)
+                :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
+                         (flatten [fkick nil nil fkick fsnare nil fsnare fkick nil nil nil nil fsnare nil nil fkick 
+                                   (repeat 8 nil) nil nil nil fkick fsnare fkick nil nil])
+                         (flatten [[fcrash (repeat 3 nil)] (repeat 7 [fchat (repeat 3 nil)])]))}}
      :bassp  {:p1 {
                 :times  (flatten (repeat 2 
                                      [0.25        0.5         0.25        0.25        0.25        0.25        0.75        0.75        0.5         0.25]))
@@ -36,10 +36,10 @@
 
 (defn funky-1 [& {:keys [:metro]}]
   (let [phrases (phrases :metro metro)
-      ;  drums (:drums phrases)
+        drums (:drums phrases)
         bassp (:bassp phrases)]
-    (println bassp)
-    [;{:p (:p2 drums)
-    ;:b (range 0 32)}
+    [{:p (:p2 drums)
+    :b (range 0 4)}
    {:p (bass-ptrn (:p1 bassp) metro bg)
-    :b (range 0 4)}]))
+    :b (range 0 4)}
+     ]))

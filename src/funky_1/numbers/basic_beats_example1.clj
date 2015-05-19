@@ -56,3 +56,14 @@
    {:p (bass-ptrn (:p2 bassp) metro bg)
     :b (range 30 36)}
      ]))
+
+(defn song-repeat [& {:keys [:metro]}]
+  (let [phrases (phrases :metro metro)
+        drums (:drums phrases)
+        bassp (:bassp phrases)]
+    [{:p (:p1 drums)
+    :b (range)}
+   {:p (bass-ptrn (:p2 bassp) metro bg)
+    :b (drop 2 (range))}
+     ]))
+
