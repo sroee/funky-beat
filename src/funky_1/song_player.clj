@@ -32,10 +32,14 @@
 
 
 
-(defn play-phrase [phrase metro beat] 
-  (play-phrase-abs-time metro beat
-                (time-len-to-abs (:times phrase) (get phrase :time-offset 0))
-                (:sounds phrase)))
+(defn play-phrase [phrase metro beat & {:keys [:on] :or {:on :beat}}]
+  (let [phrase-offset (get phrase :time-offset 0)
+        offset (case on
+                 :beat phrase-offset
+                 :im-next (- phrase-offset (Math/floor phrase-offset)))]
+    (play-phrase-abs-time metro beat
+                          (time-len-to-abs (:times phrase) offset)
+                          (:sounds phrase))))
 
 
 (defn- sorted-seq-yield-bar [sq]
@@ -74,14 +78,14 @@
        (map #( -> [% part]) beats)
        nil))))
 
-(defn repeat-phrase [phrase metro beats]
+(defn repeat-phrase [phrase metro beats  & {:keys [:on] :or {:on :beat}}]
   (let [beat-yielder (sorted-seq-yield-next beats) 
         start-time (metro)]
     (letfn [(play-beat [beat]
               (if (not (nil? beat))
                 (do
                   (att/at (metro (+ (* 8 beat) start-time)) (fn [] (eval (play-beat (beat-yielder)))) inc-sched-pull)
-                  (play-phrase phrase metro (+ (* (:beats phrase) beat) start-time))
+                  (play-phrase phrase metro (+ (* (:beats phrase) beat) start-time) :on on)
                   )))]
       (att/at (metro) (fn [] (eval (play-beat (beat-yielder)))) inc-sched-pull)))
   "playing..")
