@@ -5,7 +5,7 @@
 ;; todos:
 ;; V can run infinite running loop
 ;; can alter part schedule while running
-;; can append new part while running
+;; V can append new part while running
 ;; can alter part while running
 ;; song can be stopped
 ;; multiple songs can be loaded.
@@ -38,7 +38,7 @@
                 (:sounds phrase)))
 
 
-(defn- sorted-seq-yield-next [sq]
+(defn- sorted-seq-yield-bar [sq]
   (let [cached (atom sq)]
     (fn [from to]
       (if (empty? @cached)
@@ -56,13 +56,35 @@
                 (reset! cached sq)
                 res))))))))
 
+(defn- sorted-seq-yield-next [sq]
+  (let [cached (atom sq)]
+    (fn []
+      (if (empty? @cached)
+        nil
+        (do 
+          (let [res (first @cached)]
+            (reset! cached (drop 1 @cached))
+            res))))))
+
 (defn part-yielder [part]
- (let [bar-yielder (sorted-seq-yield-next (:b part))
+ (let [bar-yielder (sorted-seq-yield-bar (:b part))
        part (:p part)]
    (fn [bar-num]
      (if-let [beats (bar-yielder bar-num (+ bar-num 1))]
        (map #( -> [% part]) beats)
        nil))))
+
+(defn repeat-phrase [phrase metro beats]
+  (let [beat-yielder (sorted-seq-yield-next beats) 
+        start-time (metro)]
+    (letfn [(play-beat [beat]
+              (if (not (nil? beat))
+                (do
+                  (att/at (metro (+ (* 8 beat) start-time)) (fn [] (eval (play-beat (beat-yielder)))) inc-sched-pull)
+                  (play-phrase phrase metro (+ (* (:beats phrase) beat) start-time))
+                  )))]
+      (att/at (metro) (fn [] (eval (play-beat (beat-yielder)))) inc-sched-pull)))
+  "playing..")
  
 
 (defn play-song [song-fn]
