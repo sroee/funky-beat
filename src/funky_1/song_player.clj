@@ -36,7 +36,12 @@
   (let [phrase-offset (get phrase :time-offset 0)
         offset (case on
                  :beat phrase-offset
-                 :im-next (- phrase-offset (Math/floor phrase-offset)))]
+                 :im-next (- phrase-offset (Math/floor phrase-offset))
+                 :bar (let [curr-t beat
+                            beats (:beats phrase)]
+                        (+ 
+                          (mod (- beats (mod curr-t beats)) 8) 
+                          phrase-offset)))]
     (play-phrase-abs-time metro beat
                           (time-len-to-abs (:times phrase) offset)
                           (:sounds phrase))))
@@ -91,9 +96,9 @@
   "playing..")
  
 
-(defn play-song [song-fn]
-  (let [metro (metronome 90)
-        start-time (metro)
+(defn play-song [song-fn metro & {:keys [:on] :or {:on :beat}}]
+  (if-not (some #{on} [:beat :bar]) (throw (Exception. ":on parameter supports only :beat and :bar for playing song.")))
+  (let [start-time (metro)
         song-parts (song-fn :metro metro)
         part-yielders (map part-yielder song-parts)]
     (letfn [(play-bar [bar-num]
@@ -106,7 +111,7 @@
                 (map (fn [to-play]
                        (let [beat (first to-play)
                              phrase (second to-play)]
-                         (play-phrase phrase metro (+ (* 8 beat) start-time)))) 
+                         (play-phrase phrase metro (+ (* 8 beat) start-time) :on on))) 
                      what-to-play))
               )]
       (att/at (metro) (fn [] (eval (play-bar 0))) inc-sched-pull)

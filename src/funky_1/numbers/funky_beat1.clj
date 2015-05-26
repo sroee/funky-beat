@@ -14,6 +14,7 @@
               (at (metro timing) (sound))))]
 
     {:drums  {:p1 {
+                :beats 8
                 :times (repeat 32 0.25) 
                 :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
                          (flatten [fkick nil nil fkick fsnare nil fsnare fkick nil nil nil nil fsnare nil nil fkick 
@@ -21,12 +22,14 @@
                          [nil fchat fchat nil fchat fchat fchat nil fchat fchat fchat nil nil fchat fchat nil
                          nil fchat fchat nil fchat fchat fchat nil fchat fchat fchat nil nil fchat fchat fchat])}
               :p2 {
+                :beats 8
                 :times (repeat 32 0.25)
                 :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
                          (flatten [fkick nil nil fkick fsnare nil fsnare fkick nil nil nil nil fsnare nil nil fkick 
                                    (repeat 8 nil) nil nil nil fkick fsnare fkick nil nil])
                          (flatten [[fcrash (repeat 3 nil)] (repeat 7 [fchat (repeat 3 nil)])]))}}
      :bassp  {:p1 {
+                :beats 8
                 :times  (flatten (repeat 2 
                                      [0.25        0.5         0.25        0.25        0.25        0.25        0.75        0.75        0.5         0.25]))
                 :sounds             [[2 12 0.25]  [2 12 0.25] [2 10 0.25] [2 12 0.25] [2 10 0.25] [1 12 0.25] [1 10 0.75] [1 11 0.75] [1 12 0.5]  [1 12 0.25]

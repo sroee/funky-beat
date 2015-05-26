@@ -16,6 +16,7 @@
             (fn [timing]
               (at (metro timing) (sound))))]
     {:drums  {:p1 {
+                :beats 8
                 :times (repeat 32 0.25)
                 :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
                          (flatten [kick2086 nil nil kick2086 snare26903 nil snare26903 kick2086 nil nil nil nil snare26903 nil nil kick2086 
@@ -23,16 +24,19 @@
                          [nil c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil nil c-hat802 c-hat802 nil
                          nil c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil c-hat802 c-hat802 c-hat802 nil nil c-hat802 c-hat802 c-hat802])}
               :p2 {
+                :beats 8
                 :times (repeat 32 0.25)
                 :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
                          (flatten [kick2086 nil nil kick2086 snare26903 nil snare26903 kick2086 nil nil nil nil snare26903 nil nil kick2086 
                                    (repeat 8 nil) nil nil nil kick2086 snare26903 kick2086 nil nil])
                          (flatten [[crash (repeat 3 nil)] (repeat 7 [c-hat802 (repeat 3 nil)])]))}}
      :bassp  {:p1 {
+                :beats 8
                 :times  [ 1       0.5       0.5       0.25      0.5         1.25      0.5       0.5       0.5       0.5       0.5       0.25        1.25]
                 :sounds [ [3 3 1] [3 5 0.4] [3 3 0.4] [3 6 0.4] [3 7 0.25]  [3 3 0.4] [3 3 0.4] [3 5 0.4] [3 6 0.4] [3 7 0.4] [2 3 0.4] [2 5 0.25]  [2 6 0.4]]
               }
               :p2 {
+                :beats 8
                 :time-offset -1.5
                 :times  [0.5        0.5       0.5       0.25        0.5         0.75      0.5         0.75      0.75        0.25        0.25]
                 :sounds [[1 1 0.4]  [1 4 0.4] [1 6 0.5] [2 8 0.25]  [2 6 0.25]  [2 4 0.4] [1 6 0.25]  [1 4 0.5] [1 6 0.25]  [1 4 0.25]  [1 6 0.25]]
