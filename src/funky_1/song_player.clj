@@ -33,18 +33,27 @@
 
 
 (defn play-phrase [phrase metro beat & {:keys [:on] :or {:on :beat}}]
-  (let [phrase-offset (get phrase :time-offset 0)
-        offset (case on
-                 :beat phrase-offset
-                 :im-next (- phrase-offset (Math/floor phrase-offset))
-                 :bar (let [curr-t beat
-                            beats (:beats phrase)]
-                        (+ 
-                          (mod (- beats (mod curr-t beats)) 8) 
-                          phrase-offset)))]
-    (play-phrase-abs-time metro beat
-                          (time-len-to-abs (:times phrase) offset)
-                          (:sounds phrase))))
+  (letfn [(calc-bar-offset []
+                            (let [curr-t beat
+                                  beats (:beats phrase)] 
+                                (mod (- beats (mod curr-t beats)) 8)))
+           (calc-offset [phrase-offset]
+                        (if (number? on)
+                          (+ 
+                            (calc-bar-offset)
+                            phrase-offset
+                            on)
+                          (case on
+                            :beat phrase-offset
+                            :im-next (- phrase-offset (Math/floor phrase-offset))
+                            :bar (+
+                                  (calc-bar-offset)
+                                  phrase-offset))))]
+    (let [phrase-offset (get phrase :time-offset 0)
+          offset (calc-offset phrase-offset)]
+      (play-phrase-abs-time metro beat
+                            (time-len-to-abs (:times phrase) offset)
+                            (:sounds phrase)))))
 
 
 (defn- sorted-seq-yield-bar [sq]
