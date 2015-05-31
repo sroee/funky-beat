@@ -15,7 +15,12 @@
   (letfn [(sound-pl [sound]
             (fn [timing]
               (at (metro timing) (sound))))]
-    {:drums  {:p1 {
+    {:metronome {
+                 :beats 8
+                 :times (repeat 8 1)
+                 :sounds (map (fn [k] (map sound-pl (remove nil? [k])))
+                                (flatten [kick2086 (repeat 3 c-hat802) snare26903 (repeat 3 c-hat802)]))}
+     :drums  {:p1 {
                 :beats 8
                 :times (repeat 32 0.25)
                 :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
@@ -51,11 +56,16 @@
     :b (range 0 36)}
    {:p (bass-ptrn (:p1 bassp) metro bg)
     :b (concat (range 2 6) (range 8 10) (range 14 26))}
-   {:p (bass-ptrn {:sounds (transpose-stringed (:sounds (:p1 bassp)) 3) :times (:times (:p1 bassp))} metro bg2)
+   {:p (bass-ptrn (update-in (:p1 bassp) [:sounds] #( -> (transpose-stringed % 3))) metro bg2)
     :b (concat (range 10 14) (range 20 24))}
-   {:p (bass-ptrn {:sounds (transpose-stringed (:sounds (:p1 bassp)) 32) :times (:times (:p1 bassp))} metro bg3)
-    :b (map #( -> (+ (/ 1 8) %)) (range 24 28))}
-   {:p (bass-ptrn {:sounds (transpose-stringed (:sounds (:p1 bassp)) 12) :times (:times (:p1 bassp))} metro bg3)
+   {:p (bass-ptrn (assoc 
+                    (update-in 
+                      (:p1 bassp) 
+                      [:sounds] #( -> (transpose-stringed % 32)))
+                    :time-offset 1) 
+                  metro bg3)
+    :b (range 24 28)}
+   {:p (bass-ptrn (update-in (:p1 bassp) [:sounds] #( -> (transpose-stringed % 12))) metro bg3)
     :b (range 6 8)}
    {:p (bass-ptrn (:p2 bassp) metro bg)
     :b (range 30 36)}

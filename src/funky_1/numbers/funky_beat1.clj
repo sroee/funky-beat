@@ -35,7 +35,29 @@
                 :sounds             [[2 12 0.25]  [2 12 0.25] [2 10 0.25] [2 12 0.25] [2 10 0.25] [1 12 0.25] [1 10 0.75] [1 11 0.75] [1 12 0.5]  [1 12 0.25]
                                      [2 0 0.25]   [2 0 0.25]  [1 0 0.25]  [2 0 0.25]  [1 3 0.25]  [1 0 0.25]  [2 3 0.75]  [3 4 0.75]  [3 5 0.75]]
               }
-            }}))
+            }
+     :demo  {
+             :p1 {
+                  :beats 4
+                  :times (repeat 4 1)
+                  :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) [fkick fsnare fkick fsnare])}
+             :p2 {
+                 :beats 8
+                 :times (flatten (repeat 4 [1.5 0.5]))
+                 :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) (repeat 8 fchat))} 
+             :crash {
+                  :beats 0.5
+                  :times [0.5]
+                  :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) [fcrash])}
+             :kick {
+                  :beats 0.5
+                  :times [0.5]
+                  :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) [fkick])}
+             :pos-off {
+                       :beats 8
+                       :time-offset 2
+                       :times (repeat 6 1)
+                       :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) [fkick fsnare fkick fkick fkick fsnare])}  }}))
 
 (defn funky-1 [& {:keys [:metro]}]
   (let [phrases (phrases :metro metro)
