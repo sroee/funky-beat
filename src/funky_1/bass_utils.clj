@@ -2,8 +2,6 @@
   (:use [overtone.live]
         [funky-1.bass-guitar]))
 
-(def bg (bass-guitar))
-
 (defn transpose-stringed [sounds-arr frets]
   (map (fn [arr] [(first arr) (+ (second arr) frets) (nth arr 2)]) sounds-arr))
 
@@ -17,4 +15,5 @@
                                     (- (metro (+ timing (nth note-p 2))) 50))])]) 
                 (:sounds ptrn))))
                 ([ptrn metro]
-   (bass-ptrn ptrn metro bg)))
+                 (let [bg (bass-guitar)]
+                   (bass-ptrn ptrn metro bg))))

@@ -7,9 +7,6 @@
 (def kick2086 (sample (freesound-path 43369)))
 (def c-hat802 (sample (freesound-path 43373)))
 (def crash    (sample (freesound-path 28717)))
-(def bg2 (bass-guitar))
-(def bg3 (bass-guitar))
-(def bg4 (bass-guitar))
 
 (defn phrases [& {:keys [:metro]}]
   (letfn [(sound-pl [sound]
@@ -55,10 +52,10 @@
     [{:p (:p2 drums)
     :b (range 0 36)
     :n "drums"}
-   {:p (bass-ptrn (:p1 bassp) metro bg)
+   {:p (bass-ptrn (:p1 bassp) metro)
     :b (concat (range 2 6) (range 8 10) (range 14 26))
     :n "bass-base"}
-   {:p (bass-ptrn (update-in (:p1 bassp) [:sounds] #( -> (transpose-stringed % 3))) metro bg2)
+   {:p (bass-ptrn (update-in (:p1 bassp) [:sounds] #( -> (transpose-stringed % 3))) metro)
     :b (concat (range 10 14) (range 20 24))
     :n "bass-t3"}
    {:p (bass-ptrn (assoc 
@@ -66,13 +63,13 @@
                       (:p1 bassp) 
                       [:sounds] #( -> (transpose-stringed % 32)))
                     :time-offset 1) 
-                  metro bg3)
+                  metro)
     :b (range 24 28)
     :n "bass-t32-o1"}
-   {:p (bass-ptrn (update-in (:p1 bassp) [:sounds] #( -> (transpose-stringed % 12))) metro bg3)
+   {:p (bass-ptrn (update-in (:p1 bassp) [:sounds] #( -> (transpose-stringed % 12))) metro)
     :b (range 6 8)
     :n "bass-t12"}
-   {:p (bass-ptrn (:p2 bassp) metro bg)
+   {:p (bass-ptrn (:p2 bassp) metro)
     :b (range 30 36)
     :n "bass-p2"}
      ]))
@@ -84,7 +81,7 @@
     [{:p (:p1 drums)
     :b (range)
     :n "drums"}
-   {:p (bass-ptrn (:p2 bassp) metro bg)
+   {:p (bass-ptrn (:p2 bassp) metro)
     :b (drop 2 (range))
     :n "bass"}
      ]))
