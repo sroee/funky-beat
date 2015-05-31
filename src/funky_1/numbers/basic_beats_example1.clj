@@ -53,22 +53,28 @@
         drums (:drums phrases)
         bassp (:bassp phrases)]
     [{:p (:p2 drums)
-    :b (range 0 36)}
+    :b (range 0 36)
+    :n "drums"}
    {:p (bass-ptrn (:p1 bassp) metro bg)
-    :b (concat (range 2 6) (range 8 10) (range 14 26))}
+    :b (concat (range 2 6) (range 8 10) (range 14 26))
+    :n "bass-base"}
    {:p (bass-ptrn (update-in (:p1 bassp) [:sounds] #( -> (transpose-stringed % 3))) metro bg2)
-    :b (concat (range 10 14) (range 20 24))}
+    :b (concat (range 10 14) (range 20 24))
+    :n "bass-t3"}
    {:p (bass-ptrn (assoc 
                     (update-in 
                       (:p1 bassp) 
                       [:sounds] #( -> (transpose-stringed % 32)))
                     :time-offset 1) 
                   metro bg3)
-    :b (range 24 28)}
+    :b (range 24 28)
+    :n "bass-t32-o1"}
    {:p (bass-ptrn (update-in (:p1 bassp) [:sounds] #( -> (transpose-stringed % 12))) metro bg3)
-    :b (range 6 8)}
+    :b (range 6 8)
+    :n "bass-t12"}
    {:p (bass-ptrn (:p2 bassp) metro bg)
-    :b (range 30 36)}
+    :b (range 30 36)
+    :n "bass-p2"}
      ]))
 
 (defn song-repeat [& {:keys [:metro]}]
@@ -76,8 +82,10 @@
         drums (:drums phrases)
         bassp (:bassp phrases)]
     [{:p (:p1 drums)
-    :b (range)}
+    :b (range)
+    :n "drums"}
    {:p (bass-ptrn (:p2 bassp) metro bg)
-    :b (drop 2 (range))}
+    :b (drop 2 (range))
+    :n "bass"}
      ]))
 

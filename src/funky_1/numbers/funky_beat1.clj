@@ -64,7 +64,9 @@
         drums (:drums phrases)
         bassp (:bassp phrases)]
     [{:p (:p2 drums)
-    :b (range 0 4)}
+    :b (range 0 4)
+    :n "drums"}
    {:p (bass-ptrn (:p1 bassp) metro bg)
-    :b (range 0 4)}
+    :b (range 0 4)
+    :n "bass"}
      ]))

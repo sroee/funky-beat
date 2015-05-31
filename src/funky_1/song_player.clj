@@ -42,11 +42,10 @@
     (stop))
   (att/stop-and-reset-pool! inc-sched-pool :strategy :kill))
 
-(defn- rand-desc
-          ([]
-           (let [chars (map char (range 99 123))
-                 desc (take 4 (repeatedly #(rand-nth chars)))]
-                                     (reduce str desc))))   
+(defn- rand-desc []
+   (let [chars (map char (range 99 123))
+         desc (take 4 (repeatedly #(rand-nth chars)))]
+                             (reduce str desc)))   
 
 (defn cut-neg-offset [phrase]
   (loop [phrase phrase]
@@ -153,6 +152,7 @@
         longest-neg-offset (apply min (remove nil? (map #( -> (get (:p %) :time-offset 0)) song-parts)))
         parts-delays (map #( -> (- (get (:p %) :time-offset 0) longest-neg-offset)) song-parts)]
     (map 
-      (fn [_delay part] 
-        (repeat-phrase (:p part) metro :on on :desc at-desc :times (:b part) :initial-delay _delay)) 
+      (fn [_delay part]
+        (let [at-desc (str at-desc "/" (if-let [d (get part :n)] d (rand-desc)))] 
+          (repeat-phrase (:p part) metro :on on :desc at-desc :times (:b part) :initial-delay _delay))) 
       parts-delays song-parts)))
