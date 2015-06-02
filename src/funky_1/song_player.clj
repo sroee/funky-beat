@@ -26,16 +26,13 @@
 (defn- time-len-to-abs [time-len-arr offset]
   (drop-last (reduce (fn [lst tm] (conj lst (+ (last lst) tm))) [offset] time-len-arr)))
 
-(defn- play-phrase-abs-time [metro beat time-arr play-arr]
+(defn- play-phrase-abs-time [metro beat time-arr notes-arr inst]
   (let [cancel-before (get-curr-beat metro)]
     (map 
-      (fn [plays t] 
-        (map 
-          (fn [play]
-            (let [play-t (+ t beat)]
-              (if (<= cancel-before play-t) (play (+ t beat))))) 
-          plays)
-        ) play-arr time-arr)))
+      (fn [note t] 
+        (let [play-t (+ t beat)]
+          (if (<= cancel-before play-t) (inst note (+ t beat))))) 
+         notes-arr time-arr)))
 
 (defn stop-pl [& {:keys [:im]} ]
   (if im
@@ -59,7 +56,7 @@
 
 
 
-(defn play-phrase [phrase metro timing & {:keys [:on] :or {:on :beat}}]
+(defn play-phrase [inst phrase metro timing & {:keys [:on] :or {:on :beat}}]
   (letfn [(get-time-left-to-beat [curr-t beats] 
               (mod (- beats (mod curr-t beats)) beats))
           (compensate-offset [curr-t actual-play-time beats]
@@ -82,7 +79,7 @@
           beat (+ curr-t until-1 delay-add beat-change)]
       (play-phrase-abs-time metro beat
                             (time-len-to-abs (:times phrase) offset)
-                            (:sounds phrase))
+                            (:sounds phrase) inst)
       )))
 
 ;; not in use but still thinking if 5o keep current beat yielder to be inc-yielder so haven't removed.
@@ -134,7 +131,7 @@
           nil)
         -1))))
 
-(defn repeat-phrase [phrase metro & {:keys [:on :times :desc :initial-delay] :or {:on :beat :times (range) :initial-delay 0}}]
+(defn repeat-phrase [inst phrase metro & {:keys [:on :times :desc :initial-delay] :or {:on :beat :times (range) :initial-delay 0}}]
   (let [at-desc (if (nil? desc) (str "rpt-p-" (rand-desc)) desc)
         job (atom nil)
         beat-yielder (create-inc-yielder times)]
@@ -143,7 +140,7 @@
                  (let [res (beat-yielder)]
                    (cond 
                      (= res -1) (att/stop @job)
-                     (not (= res nil)) (void-println (play-phrase phrase metro 0 :on on))))) 
+                     (not (= res nil)) (void-println (play-phrase inst phrase metro 0 :on on))))) 
                inc-sched-pool :desc at-desc :initial-delay (beats-to-ms metro initial-delay)))))
 
 (defn play-song [song-fn metro & {:keys [:on :desc] :or {:on :beat :desc nil}}]
@@ -154,5 +151,5 @@
     (map 
       (fn [_delay part]
         (let [at-desc (str at-desc "/" (if-let [d (get part :n)] d (rand-desc)))] 
-          (repeat-phrase (:p part) metro :on on :desc at-desc :times (:b part) :initial-delay _delay))) 
+          (repeat-phrase (:i part) (:p part) metro :on on :desc at-desc :times (:b part) :initial-delay _delay))) 
       parts-delays song-parts)))

@@ -1,33 +1,29 @@
 (ns funky-1.numbers.funky-beat1
   (:use [overtone.live]
         [funky-1.bass-utils]
-        [funky-1.bass-guitar]))
+        [funky-1.i-set]))
 
-(def fsnare (sample (freesound-path 43377)))
-(def fkick (sample (freesound-path 43369)))
-(def fchat (sample (freesound-path 43373)))
-(def fcrash    (sample (freesound-path 28717)))
+(def drum-set {:snare (sample (freesound-path 43377))
+               :kick (sample (freesound-path 43369))
+               :chat (sample (freesound-path 43373))
+               :crash (sample (freesound-path 28717))})
 
-(defn phrases [& {:keys [:metro]}]
-  (letfn [(sound-pl [sound]
-            (fn [timing]
-              (at (metro timing) (sound))))]
-
+(def phrases
     {:drums  {:p1 {
                 :beats 8
                 :times (repeat 32 0.25) 
-                :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
-                         (flatten [fkick nil nil fkick fsnare nil fsnare fkick nil nil nil nil fsnare nil nil fkick 
-                                   (repeat 8 nil) nil nil nil fkick fsnare fkick nil nil])
-                         [nil fchat fchat nil fchat fchat fchat nil fchat fchat fchat nil nil fchat fchat nil
-                         nil fchat fchat nil fchat fchat fchat nil fchat fchat fchat nil nil fchat fchat fchat])}
+                :sounds (map (fn [k h] (remove nil?  [k h]))
+                         (flatten [:kick nil nil :kick :snare nil :snare :kick nil nil nil nil :snare nil nil :kick 
+                                   (repeat 8 nil) nil nil nil :kick :snare :kick nil nil])
+                         [nil :chat :chat nil :chat :chat :chat nil :chat :chat :chat nil nil :chat :chat nil
+                         nil :chat :chat nil :chat :chat :chat nil :chat :chat :chat nil nil :chat :chat :chat])}
               :p2 {
                 :beats 8
                 :times (repeat 32 0.25)
-                :sounds (map (fn [k h] (map sound-pl (remove nil?  [k h])))
-                         (flatten [fkick nil nil fkick fsnare nil fsnare fkick nil nil nil nil fsnare nil nil fkick 
-                                   (repeat 8 nil) nil nil nil fkick fsnare fkick nil nil])
-                         (flatten [[fcrash (repeat 3 nil)] (repeat 7 [fchat (repeat 3 nil)])]))}}
+                :sounds (map (fn [k h] (remove nil?  [k h]))
+                         (flatten [:kick nil nil :kick :snare nil :snare :kick nil nil nil nil :snare nil nil :kick 
+                                   (repeat 8 nil) nil nil nil :kick :snare :kick nil nil])
+                         (flatten [[:crash (repeat 3 nil)] (repeat 7 [:chat (repeat 3 nil)])]))}}
      :bassp  {:p1 {
                 :beats 8
                 :times  (flatten (repeat 2 
@@ -40,33 +36,36 @@
              :p1 {
                   :beats 4
                   :times (repeat 4 1)
-                  :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) [fkick fsnare fkick fsnare])}
+                  :sounds [:kick :snare :kick :snare]}
              :p2 {
                  :beats 8
                  :times (flatten (repeat 4 [1.5 0.5]))
-                 :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) (repeat 8 fchat))} 
+                 :sounds (repeat 8 :chat)} 
              :crash {
                   :beats 0.5
                   :times [0.5]
-                  :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) [fcrash])}
+                  :sounds [:crash]}
              :kick {
                   :beats 0.5
                   :times [0.5]
-                  :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) [fkick])}
+                  :sounds [:kick]}
              :pos-off {
                        :beats 8
                        :time-offset 2
                        :times (repeat 6 1)
-                       :sounds (map (fn [k] (map sound-pl (remove nil?  [k]))) [fkick fsnare fkick fkick fkick fsnare])}  }}))
+                       :sounds [:kick :snare :kick :kick :kick :snare]}  
+             }
+     })
 
 (defn funky-1 [& {:keys [:metro]}]
-  (let [phrases (phrases :metro metro)
-        drums (:drums phrases)
+  (let [drums (:drums phrases)
         bassp (:bassp phrases)]
     [{:p (:p2 drums)
     :b (range 0 4)
-    :n "drums"}
-   {:p (bass-ptrn (:p1 bassp) metro)
+    :n "drums"
+    :i (:p-arr (i-set-creator metro drum-set))}
+   {:p (:p1 bassp)
     :b (range 0 4)
-    :n "bass"}
+    :n "bass"
+    :i (i-bass-creator metro)}
      ]))
