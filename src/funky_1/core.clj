@@ -5,7 +5,7 @@
             [funky-1.song-player :as sp])
   (:use [overtone.live]))
 
-(defn play-song [song]
-  (sp/play-song song))
+(def metro (metronome 90))
 
-(defn- main [])
+(defn- main []
+    (sp/play-song fb/funky-1 metro :on :beat))

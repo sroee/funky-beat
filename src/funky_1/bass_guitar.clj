@@ -99,6 +99,8 @@
 ;; Main helper functions.  Use pick or strum to play the ukelele instrument.
 (def bass-pick (partial pick-string bass-guitar-string-notes))
 (def bass-strum (partial strum-strings bass-guitar-chord-frets bass-guitar-string-notes))
+(defn bass-note [string-index fret]
+  (+ (nth bass-guitar-string-notes string-index) fret))
 
 ;; ======================================================================
 ;; Create the bass-guitar definst.  Now via the power of macros

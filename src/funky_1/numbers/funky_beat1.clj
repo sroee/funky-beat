@@ -1,12 +1,31 @@
 (ns funky-1.numbers.funky-beat1
   (:use [overtone.live]
         [funky-1.bass-utils]
-        [funky-1.i-set]))
+        [funky-1.i-set])
+  (:require [funky-1.bass-guitar :as bg]))
 
 (def drum-set {:snare (sample (freesound-path 43377))
                :kick (sample (freesound-path 43369))
                :chat (sample (freesound-path 43373))
                :crash (sample (freesound-path 28717))})
+
+(definst mybass1 [freq 440 release 0.5]
+  (let [nu-release (/ release 2)
+        nu-freq (* freq 2)]
+  (* 
+    (+ 
+      (* (env-gen (dadsr 0 0.001 0.0001 (- nu-release 0.1) release) 1 1 0 1 FREE) (* 2 (sin-osc nu-freq))) 
+      (* (env-gen (dadsr 0.01 0.001 (- nu-release 0.1) (- nu-release 0.1) release) 1 1 0 1 FREE) (sin-osc nu-freq)) 
+      (* (env-gen (dadsr 0.01 0.1 (- nu-release 0.1) (* nu-release 1.5) release) 1 1 0 1 FREE) (+ (sin-osc (/ nu-freq 2)) (sin-osc (/ nu-freq 2.01)) (sin-osc (/ nu-freq 1.99)
+  )))
+      ) (/ 1 6))))
+
+(defn i-bass1-creator [metro]
+  (fn [note-param timing]
+    (let [note-val (bg/bass-note (first note-param) (second note-param))
+          release (last note-param)]
+      (at (metro timing) (mybass1 (midi->hz note-val) release))
+    )))
 
 (def phrases
     {:drums  {:p1 {
@@ -67,5 +86,5 @@
    {:p (:p1 bassp)
     :b (range 0 4)
     :n "bass"
-    :i (i-bass-creator metro)}
+    :i (i-bass1-creator metro)}
      ]))
