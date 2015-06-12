@@ -21,7 +21,7 @@
      :drums  {:p1 {
                 :beats 8
                 :times (repeat 32 0.25)
-                :sounds (map (fn [k h] [k h])
+                :sounds (map vector
                          (flatten [:kick nil nil :kick :snare nil :snare :kick nil nil nil nil :snare nil nil :kick 
                                    (repeat 8 nil) nil nil nil :kick :snare :kick nil nil])
                          [nil :chat :chat nil :chat :chat :chat nil :chat :chat :chat nil nil :chat :chat nil
@@ -29,7 +29,7 @@
               :p2 {
                 :beats 8
                 :times (repeat 32 0.25)
-                :sounds (map (fn [k h] [k h])
+                :sounds (map vector
                          (flatten [:kick nil nil :kick :snare nil :snare :kick nil nil nil nil :snare nil nil :kick 
                                    (repeat 8 nil) nil nil nil :kick :snare :kick nil nil])
                          (flatten [[:crash (repeat 3 nil)] (repeat 7 [:chat (repeat 3 nil)])]))}}
