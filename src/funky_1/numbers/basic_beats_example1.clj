@@ -1,7 +1,11 @@
 (ns funky-1.numbers.basic-beats-example1
   (:use [overtone.live]
         [funky-1.bass-utils]
-        [funky-1.i-set]))
+        [funky-1.i-set]
+        [funky-1.song-player]))
+
+
+(def metro (metronome 90))
 
 (def drum-set { 
                :snare (sample (freesound-path 43377))
@@ -17,7 +21,7 @@
      :drums  {:p1 {
                 :beats 8
                 :times (repeat 32 0.25)
-                :sounds (map (fn [k h] (remove nil?  [k h]))
+                :sounds (map (fn [k h] [k h])
                          (flatten [:kick nil nil :kick :snare nil :snare :kick nil nil nil nil :snare nil nil :kick 
                                    (repeat 8 nil) nil nil nil :kick :snare :kick nil nil])
                          [nil :chat :chat nil :chat :chat :chat nil :chat :chat :chat nil nil :chat :chat nil
@@ -25,7 +29,7 @@
               :p2 {
                 :beats 8
                 :times (repeat 32 0.25)
-                :sounds (map (fn [k h] (remove nil?  [k h]))
+                :sounds (map (fn [k h] [k h])
                          (flatten [:kick nil nil :kick :snare nil :snare :kick nil nil nil nil :snare nil nil :kick 
                                    (repeat 8 nil) nil nil nil :kick :snare :kick nil nil])
                          (flatten [[:crash (repeat 3 nil)] (repeat 7 [:chat (repeat 3 nil)])]))}}
@@ -90,3 +94,5 @@
     :i (i-bass-creator metro)}
      ]))
 
+
+(play-song song-1 metro :on :beat)
