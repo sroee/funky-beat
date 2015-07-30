@@ -96,3 +96,4 @@
 
 
 (play-song song-1 metro :on :beat)
+(stop-pl)
